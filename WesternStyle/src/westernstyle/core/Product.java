@@ -1,17 +1,28 @@
 package westernstyle.core;
 
-public class Product
+public abstract class Product
 {
     private String name, countryOfOrigin;
     private double purchasePrice, salesPrice, rentPrice;
     private int minStock;
     private  int id;
+    private Supplier supplier;
     
     public Product(int id)
     {
         this.id = id;
     }
 
+    public void setSupplier(Supplier supplier)
+    {
+        this.supplier = supplier;
+    }
+
+    public Supplier getSupplier()
+    {
+        return supplier;
+    }
+    
     public void setCountryOfOrigin(String countryOfOrigin)
     {
         this.countryOfOrigin = countryOfOrigin;
