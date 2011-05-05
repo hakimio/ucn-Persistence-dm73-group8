@@ -1,33 +1,33 @@
 package westernstyle.DB;
 
-import westernstyle.core.Customer;
 import java.sql.*;
+import westernstyle.core.Supplier;
 import java.util.ArrayList;
 
-public class CustomerDB
+public class SupplierDB
 {
     private Connection con;
-
-    public CustomerDB()
+    
+    public SupplierDB()
     {
         con = DBConnection.getInstance().getDBConnection();
     }
-
-    public ArrayList<Customer> getCustomers()
+    
+    public ArrayList<Supplier> getSuppliers()
     {
         return where("");
     }
     
-    public Customer getCustomer(int id)
+    public Supplier getSupplier(int id)
     {
         return singleWhere("id = "+id);
     }
     
-    private Customer singleWhere(String wClause)
+    private Supplier singleWhere(String wClause)
     {
         ResultSet results;
         String query = buildQuery(wClause);
-        Customer customer = null;
+        Supplier supplier = null;
         try
         {
             Statement stmt = con.createStatement();
@@ -35,7 +35,7 @@ public class CustomerDB
             results = stmt.executeQuery(query);
             if(results.next())
             {
-                customer = createCustomer(results);
+                supplier = createSupplier(results);
             }
             stmt.close();
         }
@@ -44,13 +44,13 @@ public class CustomerDB
             System.out.println(e.getMessage());
         }
         
-        return  customer;
+        return  supplier;
     }
 
-    private ArrayList<Customer> where(String wClause)
+    private ArrayList<Supplier> where(String wClause)
     {
         ResultSet results;
-        ArrayList<Customer> list = new ArrayList<Customer>();
+        ArrayList<Supplier> list = new ArrayList<Supplier>();
         String query = buildQuery(wClause);
         
         try
@@ -60,8 +60,8 @@ public class CustomerDB
             results = stmt.executeQuery(query);
             while(results.next())
             {
-                Customer customer = createCustomer(results);
-                list.add(customer);
+                Supplier supplier = createSupplier(results);
+                list.add(supplier);
             }
             stmt.close();
         }
@@ -75,7 +75,7 @@ public class CustomerDB
 
     private String buildQuery(String whereC)
     {
-        String query = "SELECT * FROM customer";
+        String query = "SELECT * FROM supplier";
         if (!whereC.isEmpty())
         {
             query = query + " WHERE " + whereC;
@@ -83,17 +83,17 @@ public class CustomerDB
         return query;
     }
     
-    private Customer createCustomer(ResultSet rs)
+    private Supplier createSupplier(ResultSet rs)
     {
         try
         {
-            Customer customer = new Customer(rs.getInt("id"));
-            customer.setName(rs.getString("name"));
-            customer.setAddress(rs.getString("address"));
-            customer.setCity(rs.getString("city"));
-            customer.setPhoneno(rs.getString("phoneNo"));
-            customer.setOrderZipCode(rs.getInt("zipCode"));
-            return customer;
+            Supplier supplier = new Supplier(rs.getInt("id"));
+            supplier.setName(rs.getString("name"));
+            supplier.setAddress(rs.getString("address"));
+            supplier.setCountry(rs.getString("country"));
+            supplier.setPhoneno(rs.getString("phoneNo"));
+            supplier.setEmail(rs.getString("email"));
+            return supplier;
         }
         catch (SQLException e)
         {
@@ -107,7 +107,7 @@ public class CustomerDB
     {
         //row count
         int rc = -1;
-        String query = "DELETE FROM customer WHERE id="+id;
+        String query = "DELETE FROM supplier WHERE id="+id;
         try
         {
             Statement stmt = con.createStatement();
@@ -123,18 +123,18 @@ public class CustomerDB
         return rc;
     }
     //@SuppressWarnings("empty-statement")
-    public int insertCustomer(Customer customer)
+    public int insertSupplier(Supplier supplier)
     {
-        //int nextId = GetMax.getMaxId("select max(id) from customer") + 1;
+        //int nextId = GetMax.getMaxId("select max(id) from supplier") + 1;
         int rc = -1;
-        String query = "INSERT INTO customer(id,name,address,phoneNo,city,zipCode)"
+        String query = "INSERT INTO supplier(id,name,address,phoneNo,country,email)"
                 +"VALUES('"
-                + customer.getId() + "','" 
-                + customer.getName() + "','" 
-                + customer.getAddress() + "','" 
-                + customer.getPhoneno() + "','" 
-                + customer.getCity() + "','" 
-                + customer.getOrderZipCode() + ")";
+                + supplier.getId() + "','" 
+                + supplier.getName() + "','" 
+                + supplier.getAddress() + "','" 
+                + supplier.getPhoneno() + "','" 
+                + supplier.getCountry() + "','" 
+                + supplier.getEmail() + ")";
         try
         {
             con.setAutoCommit(false);
@@ -163,16 +163,16 @@ public class CustomerDB
         return rc;
     }
     
-    public int updateCustomer(Customer customer)
+    public int updateSupplier(Supplier supplier)
     {
         int rc = -1;
         String query = "Update customer SET "+
-                "name ='" + customer.getName() + "'"+
-                "address ='" + customer.getAddress() + "'"+
-                "phoneNo ='" + customer.getPhoneno() + "'"+
-                "city ='" + customer.getCity() + "'"+
-                "zipCode ='" + customer.getOrderZipCode() + "'"+
-                "WHERE id="+customer.getId();
+                "name ='" + supplier.getName() + "'"+
+                "address ='" + supplier.getAddress() + "'"+
+                "phoneNo ='" + supplier.getPhoneno() + "'"+
+                "country ='" + supplier.getCountry() + "'"+
+                "email ='" + supplier.getEmail() + "'"+
+                "WHERE id="+supplier.getId();
         try
         {
             Statement stmt = con.createStatement();
