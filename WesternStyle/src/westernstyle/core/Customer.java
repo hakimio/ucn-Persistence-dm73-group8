@@ -2,8 +2,8 @@ package westernstyle.core;
 
 public class Customer
 {
-    private String name, address, orderZipCode, city, phoneno;
-    private int id;
+    private String name, address, city, phoneno;
+    private int id, orderZipCode;
     
     public Customer(int id)
     {
@@ -30,7 +30,7 @@ public class Customer
         return name;
     }
 
-    public String getOrderZipCode()
+    public int getOrderZipCode()
     {
         return orderZipCode;
     }
@@ -60,7 +60,7 @@ public class Customer
         this.name = name;
     }
 
-    public void setOrderZipCode(String orderZipCode)
+    public void setOrderZipCode(int orderZipCode)
     {
         this.orderZipCode = orderZipCode;
     }
