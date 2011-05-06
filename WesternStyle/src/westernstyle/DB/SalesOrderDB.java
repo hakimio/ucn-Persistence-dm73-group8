@@ -39,11 +39,7 @@ public class SalesOrderDB
             {
                 salesOrder = createSalesOrder(results);
             }
-            else
-            {
-                stmt.close();
-                return null;
-            }
+
             stmt.close();
             CustomerDB customerDB = new CustomerDB();
             int customerId = salesOrder.getCustomer().getId();
@@ -77,19 +73,6 @@ public class SalesOrderDB
                 list.add(salesOrder);
             }
             stmt.close();
-            
-            if (list.isEmpty())
-                return list;
-            for(int i = 0; i < list.size(); i++)
-            {
-                SalesOrder salesOrder = list.get(i);
-                CustomerDB customerDB = new CustomerDB();
-                int customerId = salesOrder.getCustomer().getId();
-                salesOrder.setCustomer(customerDB.getCustomer(customerId));
-                InvoiceDB invoiceDB = new InvoiceDB();
-                int invoiceId = salesOrder.getInvoice().getId();
-                salesOrder.setInvoice(invoiceDB.getInvoice(invoiceId));
-            }
         }
         catch (Exception e)
         {
@@ -115,11 +98,17 @@ public class SalesOrderDB
         {
             SalesOrder salesOrder = new SalesOrder(rs.getInt("id"));
             salesOrder.setAmount(rs.getInt("amount"));
-            salesOrder.setCustomer(new Customer(rs.getInt("customerId")));
             salesOrder.setDate(rs.getDate("date"));
             salesOrder.setDeliveryDate(rs.getDate("deliveryDate"));
             salesOrder.setDeliveryStatus(rs.getString("deliveryStatus"));
-            salesOrder.setInvoice(new Invoice(rs.getInt("invoiceId")));
+            
+            CustomerDB customerDB = new CustomerDB();
+            Customer customer = customerDB.getCustomer(rs.getInt("customerId"));
+            salesOrder.setCustomer(customer);
+            InvoiceDB invoiceDB = new InvoiceDB();
+            Invoice invoice = invoiceDB.getInvoice(rs.getInt("invoiceId"));
+            salesOrder.setInvoice(invoice);
+            
             return salesOrder;
         }
         catch (SQLException e)

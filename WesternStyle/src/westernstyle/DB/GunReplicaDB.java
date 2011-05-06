@@ -2,33 +2,32 @@ package westernstyle.DB;
 
 import java.sql.*;
 import java.util.ArrayList;
+import westernstyle.core.GunReplica;
 import westernstyle.core.Product;
-import westernstyle.core.Supplier;
 
-public class ProductDB
+public class GunReplicaDB
 {
     private Connection con;
-    
-    public ProductDB()
+
+    public GunReplicaDB()
     {
         con = DBConnection.getInstance().getDBConnection();
     }
-    
-    public ArrayList<Product> getProducts()
+    public ArrayList<GunReplica> getEquipment()
     {
         return where("");
     }
     
-    public Product getProduct(int id)
+    public GunReplica getGunReplica(int id)
     {
         return singleWhere("id = "+id);
     }
     
-    private Product singleWhere(String wClause)
+    private GunReplica singleWhere(String wClause)
     {
         ResultSet results;
         String query = buildQuery(wClause);
-        Product product = null;
+        GunReplica gunReplica = null;
         try
         {
             Statement stmt = con.createStatement();
@@ -36,9 +35,8 @@ public class ProductDB
             results = stmt.executeQuery(query);
             if(results.next())
             {
-                product = createProduct(results);
+                gunReplica = createGunReplica(results);
             }
-            
             stmt.close();
         }
         catch (Exception e)
@@ -46,13 +44,13 @@ public class ProductDB
             System.out.println(e.getMessage());
         }
         
-        return  product;
+        return  gunReplica;
     }
 
-    private ArrayList<Product> where(String wClause)
+    private ArrayList<GunReplica> where(String wClause)
     {
         ResultSet results;
-        ArrayList<Product> list = new ArrayList<Product>();
+        ArrayList<GunReplica> list = new ArrayList<GunReplica>();
         String query = buildQuery(wClause);
         
         try
@@ -60,13 +58,11 @@ public class ProductDB
             Statement stmt = con.createStatement();
             stmt.setQueryTimeout(5);
             results = stmt.executeQuery(query);
-            
             while(results.next())
             {
-                Product product = createProduct(results);                
-                list.add(product);
+                GunReplica gunReplica = createGunReplica(results);
+                list.add(gunReplica);
             }
-
             stmt.close();
         }
         catch (Exception e)
@@ -79,7 +75,7 @@ public class ProductDB
 
     private String buildQuery(String whereC)
     {
-        String query = "SELECT * FROM product";
+        String query = "SELECT * FROM gunReplica";
         if (!whereC.isEmpty())
         {
             query = query + " WHERE " + whereC;
@@ -87,21 +83,23 @@ public class ProductDB
         return query;
     }
     
-    private Product createProduct(ResultSet rs)
+    private GunReplica createGunReplica(ResultSet rs)
     {
         try
         {
-            Product product = new Product(rs.getInt("id"));
-            product.setName(rs.getString("name"));
-            product.setMinStock(rs.getInt("minStock"));
-            product.setPurchasePrice(rs.getDouble("purchasePrice"));
-            product.setRentPrice(rs.getDouble("rentPrice"));
-            product.setSalesPrice(rs.getDouble("salesPrice"));
-            product.setCountryOfOrigin(rs.getString("countryOfOrigin"));
-            SupplierDB supplierDB = new SupplierDB();
-            Supplier supplier = supplierDB.getSupplier(rs.getInt("supplierId"));
-            product.setSupplier(supplier);
-            return product;
+            GunReplica gunReplica = new GunReplica(rs.getInt("productId"));
+            gunReplica.setFabric(rs.getString("fabric"));
+            gunReplica.setCalibre(rs.getString("calibre"));
+            ProductDB productDB = new ProductDB();
+            Product product = productDB.getProduct(rs.getInt("productId"));
+            gunReplica.setName(product.getName());
+            gunReplica.setPurchasePrice(product.getPurchasePrice());
+            gunReplica.setSalesPrice(product.getSalesPrice());
+            gunReplica.setRentPrice(product.getRentPrice());
+            gunReplica.setCountryOfOrigin(product.getCountryOfOrigin());
+            gunReplica.setMinStock(product.getMinStock());
+            gunReplica.setSupplier(product.getSupplier());
+            return gunReplica;
         }
         catch (SQLException e)
         {
@@ -115,7 +113,7 @@ public class ProductDB
     {
         //row count
         int rc = -1;
-        String query = "DELETE FROM product WHERE id="+id;
+        String query = "DELETE FROM gunReplica WHERE id="+id;
         try
         {
             Statement stmt = con.createStatement();
@@ -131,21 +129,18 @@ public class ProductDB
         return rc;
     }
     //@SuppressWarnings("empty-statement")
-    public int insertProduct(Product product)
+    public int insertGunReplica(GunReplica gunReplica)
     {
-        //int nextId = GetMax.getMaxId("select max(id) from invoice") + 1;
+        int nextId = GetMax.getMaxId("select max(id) from gunReplica") + 1;
         int rc = -1;
-        String query = "INSERT INTO product(id,name,purchasePrice,salesPrice,"
-                + "rentPrice,countryOfOrigin,minStock,supplierId)"
+        String query = "INSERT INTO gunReplica(id,productId,fabric,calibre)"
                 +"VALUES('"
-                + product.getId() + "','" 
-                + product.getName() + "','" 
-                + product.getPurchasePrice() + "','" 
-                + product.getSalesPrice() + "','" 
-                + product.getRentPrice() + "','" 
-                + product.getCountryOfOrigin() + "','" 
-                + product.getMinStock() + "','" 
-                + product.getSupplier().getId() + ")";
+                + nextId + "','" 
+                + gunReplica.getId() + "','" 
+                + gunReplica.getFabric() + "','" 
+                + gunReplica.getCalibre() + ")";
+        ProductDB productDB = new ProductDB();
+        productDB.insertProduct(gunReplica);
         try
         {
             con.setAutoCommit(false);
@@ -174,18 +169,16 @@ public class ProductDB
         return rc;
     }
     
-    public int updateProduct(Product product)
+    public int updateGunReplica(GunReplica gunReplica)
     {
         int rc = -1;
-        String query = "Update product SET "+
-                "name ='" + product.getName() + "'"+
-                "purchasePrice ='" + product.getPurchasePrice() + "'"+
-                "salesPrice ='" + product.getSalesPrice() + "'"+
-                "rentPrice ='" + product.getRentPrice() + "'"+
-                "countryOfOrigin ='" + product.getCountryOfOrigin() + "'"+
-                "minStock ='" + product.getMinStock() + "'"+
-                "supplierId ='" + product.getSupplier().getId() + "'"+
-                "WHERE id="+product.getId();
+        String query = "Update gunReplica SET "+
+                "fabric ='" + gunReplica.getFabric() + "'"+
+                "calibre ='" + gunReplica.getCalibre() + "'"+
+                "WHERE productId="+ gunReplica.getId();
+        ProductDB productDB = new ProductDB();
+        productDB.updateProduct(gunReplica);
+        
         try
         {
             Statement stmt = con.createStatement();

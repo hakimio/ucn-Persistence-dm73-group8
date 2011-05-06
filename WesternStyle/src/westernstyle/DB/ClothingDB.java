@@ -2,33 +2,33 @@ package westernstyle.DB;
 
 import java.sql.*;
 import java.util.ArrayList;
+import westernstyle.core.Clothing;
 import westernstyle.core.Product;
-import westernstyle.core.Supplier;
 
-public class ProductDB
+public class ClothingDB
 {
     private Connection con;
     
-    public ProductDB()
+    public ClothingDB()
     {
         con = DBConnection.getInstance().getDBConnection();
     }
     
-    public ArrayList<Product> getProducts()
+    public ArrayList<Clothing> getClothings()
     {
         return where("");
     }
     
-    public Product getProduct(int id)
+    public Clothing getClothing(int id)
     {
         return singleWhere("id = "+id);
     }
     
-    private Product singleWhere(String wClause)
+    private Clothing singleWhere(String wClause)
     {
         ResultSet results;
         String query = buildQuery(wClause);
-        Product product = null;
+        Clothing clothing = null;
         try
         {
             Statement stmt = con.createStatement();
@@ -36,9 +36,8 @@ public class ProductDB
             results = stmt.executeQuery(query);
             if(results.next())
             {
-                product = createProduct(results);
+                clothing = createClothing(results);
             }
-            
             stmt.close();
         }
         catch (Exception e)
@@ -46,13 +45,13 @@ public class ProductDB
             System.out.println(e.getMessage());
         }
         
-        return  product;
+        return  clothing;
     }
 
-    private ArrayList<Product> where(String wClause)
+    private ArrayList<Clothing> where(String wClause)
     {
         ResultSet results;
-        ArrayList<Product> list = new ArrayList<Product>();
+        ArrayList<Clothing> list = new ArrayList<Clothing>();
         String query = buildQuery(wClause);
         
         try
@@ -60,13 +59,11 @@ public class ProductDB
             Statement stmt = con.createStatement();
             stmt.setQueryTimeout(5);
             results = stmt.executeQuery(query);
-            
             while(results.next())
             {
-                Product product = createProduct(results);                
-                list.add(product);
+                Clothing clothing = createClothing(results);
+                list.add(clothing);
             }
-
             stmt.close();
         }
         catch (Exception e)
@@ -79,7 +76,7 @@ public class ProductDB
 
     private String buildQuery(String whereC)
     {
-        String query = "SELECT * FROM product";
+        String query = "SELECT * FROM clothing";
         if (!whereC.isEmpty())
         {
             query = query + " WHERE " + whereC;
@@ -87,21 +84,23 @@ public class ProductDB
         return query;
     }
     
-    private Product createProduct(ResultSet rs)
+    private Clothing createClothing(ResultSet rs)
     {
         try
         {
-            Product product = new Product(rs.getInt("id"));
-            product.setName(rs.getString("name"));
-            product.setMinStock(rs.getInt("minStock"));
-            product.setPurchasePrice(rs.getDouble("purchasePrice"));
-            product.setRentPrice(rs.getDouble("rentPrice"));
-            product.setSalesPrice(rs.getDouble("salesPrice"));
-            product.setCountryOfOrigin(rs.getString("countryOfOrigin"));
-            SupplierDB supplierDB = new SupplierDB();
-            Supplier supplier = supplierDB.getSupplier(rs.getInt("supplierId"));
-            product.setSupplier(supplier);
-            return product;
+            Clothing clothing = new Clothing(rs.getInt("productId"));
+            clothing.setColour(rs.getString("colour"));
+            clothing.setSize(rs.getInt("size"));
+            ProductDB productDB = new ProductDB();
+            Product product = productDB.getProduct(rs.getInt("productId"));
+            clothing.setName(product.getName());
+            clothing.setPurchasePrice(product.getPurchasePrice());
+            clothing.setSalesPrice(product.getSalesPrice());
+            clothing.setRentPrice(product.getRentPrice());
+            clothing.setCountryOfOrigin(product.getCountryOfOrigin());
+            clothing.setMinStock(product.getMinStock());
+            clothing.setSupplier(product.getSupplier());
+            return clothing;
         }
         catch (SQLException e)
         {
@@ -115,7 +114,7 @@ public class ProductDB
     {
         //row count
         int rc = -1;
-        String query = "DELETE FROM product WHERE id="+id;
+        String query = "DELETE FROM clothing WHERE id="+id;
         try
         {
             Statement stmt = con.createStatement();
@@ -131,21 +130,18 @@ public class ProductDB
         return rc;
     }
     //@SuppressWarnings("empty-statement")
-    public int insertProduct(Product product)
+    public int insertClothing(Clothing clothing)
     {
-        //int nextId = GetMax.getMaxId("select max(id) from invoice") + 1;
+        int nextId = GetMax.getMaxId("select max(id) from clothing") + 1;
         int rc = -1;
-        String query = "INSERT INTO product(id,name,purchasePrice,salesPrice,"
-                + "rentPrice,countryOfOrigin,minStock,supplierId)"
+        String query = "INSERT INTO clothing(id,productId,size,colour)"
                 +"VALUES('"
-                + product.getId() + "','" 
-                + product.getName() + "','" 
-                + product.getPurchasePrice() + "','" 
-                + product.getSalesPrice() + "','" 
-                + product.getRentPrice() + "','" 
-                + product.getCountryOfOrigin() + "','" 
-                + product.getMinStock() + "','" 
-                + product.getSupplier().getId() + ")";
+                + nextId + "','" 
+                + clothing.getId() + "','" 
+                + clothing.getSize() + "','" 
+                + clothing.getColour() + ")";
+        ProductDB productDB = new ProductDB();
+        productDB.insertProduct(clothing);
         try
         {
             con.setAutoCommit(false);
@@ -174,18 +170,16 @@ public class ProductDB
         return rc;
     }
     
-    public int updateProduct(Product product)
+    public int updateClothing(Clothing clothing)
     {
         int rc = -1;
-        String query = "Update product SET "+
-                "name ='" + product.getName() + "'"+
-                "purchasePrice ='" + product.getPurchasePrice() + "'"+
-                "salesPrice ='" + product.getSalesPrice() + "'"+
-                "rentPrice ='" + product.getRentPrice() + "'"+
-                "countryOfOrigin ='" + product.getCountryOfOrigin() + "'"+
-                "minStock ='" + product.getMinStock() + "'"+
-                "supplierId ='" + product.getSupplier().getId() + "'"+
-                "WHERE id="+product.getId();
+        String query = "Update clothing SET "+
+                "size ='" + clothing.getSize() + "'"+
+                "colour ='" + clothing.getColour() + "'"+
+                "WHERE productId="+clothing.getId();
+        ProductDB productDB = new ProductDB();
+        productDB.updateProduct(clothing);
+        
         try
         {
             Statement stmt = con.createStatement();
