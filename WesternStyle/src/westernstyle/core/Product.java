@@ -1,6 +1,6 @@
 package westernstyle.core;
 
-public abstract class Product
+public class Product
 {
     private String name, countryOfOrigin;
     private double purchasePrice, salesPrice, rentPrice;

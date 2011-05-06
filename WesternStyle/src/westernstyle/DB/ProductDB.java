@@ -2,34 +2,33 @@ package westernstyle.DB;
 
 import java.sql.*;
 import java.util.ArrayList;
-import westernstyle.core.SalesOrder;
-import westernstyle.core.Invoice;
-import westernstyle.core.Customer;
+import westernstyle.core.Product;
+import westernstyle.core.Supplier;
 
-public class SalesOrderDB
+public class ProductDB
 {
     private Connection con;
     
-    public SalesOrderDB()
+    public ProductDB()
     {
         con = DBConnection.getInstance().getDBConnection();
     }
     
-    public ArrayList<SalesOrder> getSalesOrders()
+    public ArrayList<Product> getProducts()
     {
         return where("");
     }
     
-    public SalesOrder getSalesOrder(int id)
+    public Product getProduct(int id)
     {
         return singleWhere("id = "+id);
     }
     
-    private SalesOrder singleWhere(String wClause)
+    private Product singleWhere(String wClause)
     {
         ResultSet results;
         String query = buildQuery(wClause);
-        SalesOrder salesOrder = null;
+        Product product = null;
         try
         {
             Statement stmt = con.createStatement();
@@ -37,7 +36,7 @@ public class SalesOrderDB
             results = stmt.executeQuery(query);
             if(results.next())
             {
-                salesOrder = createSalesOrder(results);
+                product = createProduct(results);
             }
             else
             {
@@ -45,25 +44,22 @@ public class SalesOrderDB
                 return null;
             }
             stmt.close();
-            CustomerDB customerDB = new CustomerDB();
-            int customerId = salesOrder.getCustomer().getId();
-            salesOrder.setCustomer(customerDB.getCustomer(customerId));
-            InvoiceDB invoiceDB = new InvoiceDB();
-            int invoiceId = salesOrder.getInvoice().getId();
-            salesOrder.setInvoice(invoiceDB.getInvoice(invoiceId));
+            SupplierDB supplierDB = new SupplierDB();
+            int supplierId = product.getSupplier().getId();
+            product.setSupplier(supplierDB.getSupplier(supplierId));
         }
         catch (Exception e)
         {
             System.out.println(e.getMessage());
         }
         
-        return  salesOrder;
+        return  product;
     }
 
-    private ArrayList<SalesOrder> where(String wClause)
+    private ArrayList<Product> where(String wClause)
     {
         ResultSet results;
-        ArrayList<SalesOrder> list = new ArrayList<SalesOrder>();
+        ArrayList<Product> list = new ArrayList<Product>();
         String query = buildQuery(wClause);
         
         try
@@ -71,24 +67,24 @@ public class SalesOrderDB
             Statement stmt = con.createStatement();
             stmt.setQueryTimeout(5);
             results = stmt.executeQuery(query);
+            
             while(results.next())
             {
-                SalesOrder salesOrder = createSalesOrder(results);                
-                list.add(salesOrder);
+                Product product = createProduct(results);                
+                list.add(product);
             }
+
             stmt.close();
             
             if (list.isEmpty())
                 return list;
+            
             for(int i = 0; i < list.size(); i++)
             {
-                SalesOrder salesOrder = list.get(i);
-                CustomerDB customerDB = new CustomerDB();
-                int customerId = salesOrder.getCustomer().getId();
-                salesOrder.setCustomer(customerDB.getCustomer(customerId));
-                InvoiceDB invoiceDB = new InvoiceDB();
-                int invoiceId = salesOrder.getInvoice().getId();
-                salesOrder.setInvoice(invoiceDB.getInvoice(invoiceId));
+                Product product = list.get(i);
+                SupplierDB supplierDB = new SupplierDB();
+                int supplierId = product.getSupplier().getId();
+                product.setSupplier(supplierDB.getSupplier(supplierId));
             }
         }
         catch (Exception e)
@@ -101,7 +97,7 @@ public class SalesOrderDB
 
     private String buildQuery(String whereC)
     {
-        String query = "SELECT * FROM salesOrder";
+        String query = "SELECT * FROM product";
         if (!whereC.isEmpty())
         {
             query = query + " WHERE " + whereC;
@@ -109,18 +105,19 @@ public class SalesOrderDB
         return query;
     }
     
-    private SalesOrder createSalesOrder(ResultSet rs)
+    private Product createProduct(ResultSet rs)
     {
         try
         {
-            SalesOrder salesOrder = new SalesOrder(rs.getInt("id"));
-            salesOrder.setAmount(rs.getInt("amount"));
-            salesOrder.setCustomer(new Customer(rs.getInt("customerId")));
-            salesOrder.setDate(rs.getDate("date"));
-            salesOrder.setDeliveryDate(rs.getDate("deliveryDate"));
-            salesOrder.setDeliveryStatus(rs.getString("deliveryStatus"));
-            salesOrder.setInvoice(new Invoice(rs.getInt("invoiceId")));
-            return salesOrder;
+            Product product = new Product(rs.getInt("id"));
+            product.setName(rs.getString("name"));
+            product.setMinStock(rs.getInt("minStock"));
+            product.setPurchasePrice(rs.getDouble("purchasePrice"));
+            product.setRentPrice(rs.getDouble("rentPrice"));
+            product.setSalesPrice(rs.getDouble("salesPrice"));
+            product.setCountryOfOrigin(rs.getString("countryOfOrigin"));
+            product.setSupplier(new Supplier(rs.getInt("supplierId")));
+            return product;
         }
         catch (SQLException e)
         {
@@ -134,7 +131,7 @@ public class SalesOrderDB
     {
         //row count
         int rc = -1;
-        String query = "DELETE FROM salesOrder WHERE id="+id;
+        String query = "DELETE FROM product WHERE id="+id;
         try
         {
             Statement stmt = con.createStatement();
@@ -150,19 +147,21 @@ public class SalesOrderDB
         return rc;
     }
     //@SuppressWarnings("empty-statement")
-    public int insertSalesOrder(SalesOrder salesOrder)
+    public int insertProduct(Product product)
     {
         //int nextId = GetMax.getMaxId("select max(id) from invoice") + 1;
         int rc = -1;
-        String query = "INSERT INTO salesOrder(id,date,amount,deliveryStatus,"
-                + "deliveryDate,customerId,InvoiceId)"
+        String query = "INSERT INTO product(id,name,purchasePrice,salesPrice,"
+                + "rentPrice,countryOfOrigin,minStock,supplierId)"
                 +"VALUES('"
-                + salesOrder.getId() + "','" 
-                + salesOrder.getDate() + "','" 
-                + salesOrder.getDeliveryStatus() + "','" 
-                + salesOrder.getDeliveryDate() + "','" 
-                + salesOrder.getCustomer().getId() + "','" 
-                + salesOrder.getInvoice().getId() + ")";
+                + product.getId() + "','" 
+                + product.getName() + "','" 
+                + product.getPurchasePrice() + "','" 
+                + product.getSalesPrice() + "','" 
+                + product.getRentPrice() + "','" 
+                + product.getCountryOfOrigin() + "','" 
+                + product.getMinStock() + "','" 
+                + product.getSupplier().getId() + ")";
         try
         {
             con.setAutoCommit(false);
@@ -191,17 +190,18 @@ public class SalesOrderDB
         return rc;
     }
     
-    public int updateSalesOrder(SalesOrder salesOrder)
+    public int updateProduct(Product product)
     {
         int rc = -1;
-        String query = "Update salesOrder SET "+
-                "date ='" + salesOrder.getDate() + "'"+
-                "amount ='" + salesOrder.getAmount() + "'"+
-                "deliveryStatus ='" + salesOrder.getDeliveryStatus() + "'"+
-                "deliveryDate ='" + salesOrder.getDeliveryDate() + "'"+
-                "customerId ='" + salesOrder.getCustomer().getId() + "'"+
-                "invoiceId ='" + salesOrder.getInvoice().getId() + "'"+
-                "WHERE id="+salesOrder.getId();
+        String query = "Update product SET "+
+                "name ='" + product.getName() + "'"+
+                "purchasePrice ='" + product.getPurchasePrice() + "'"+
+                "salesPrice ='" + product.getSalesPrice() + "'"+
+                "rentPrice ='" + product.getRentPrice() + "'"+
+                "countryOfOrigin ='" + product.getCountryOfOrigin() + "'"+
+                "minStock ='" + product.getMinStock() + "'"+
+                "supplierId ='" + product.getSupplier().getId() + "'"+
+                "WHERE id="+product.getId();
         try
         {
             Statement stmt = con.createStatement();
