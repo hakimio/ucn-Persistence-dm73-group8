@@ -139,7 +139,7 @@ public class CustomerDB
                 + customer.getAddress() + "','" 
                 + customer.getPhoneno() + "','" 
                 + customer.getCity() + "','" 
-                + customer.getOrderZipCode() + ")";
+                + customer.getOrderZipCode() + "')";
         try
         {
             con.setAutoCommit(false);

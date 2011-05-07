@@ -143,7 +143,7 @@ public class EquipmentDB
                 + nextId + "','" 
                 + equipment.getId() + "','" 
                 + equipment.getType() + "','" 
-                + equipment.getDescription() + ")";
+                + equipment.getDescription() + "')";
         ProductDB productDB = new ProductDB();
         productDB.insertProduct(equipment);
         try

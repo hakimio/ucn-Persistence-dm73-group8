@@ -130,7 +130,7 @@ public class InvoiceDB
                 + invoice.getId() + "','" 
                 + invoice.getInvoiceNo() + "','" 
                 + invoice.getPaymentDate() + "','" 
-                + invoice.getAmount() + ")";
+                + invoice.getAmount() + "')";
         try
         {
             con.setAutoCommit(false);

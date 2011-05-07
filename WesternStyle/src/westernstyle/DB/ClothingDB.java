@@ -144,7 +144,7 @@ public class ClothingDB
                 + nextId + "','" 
                 + clothing.getId() + "','" 
                 + clothing.getSize() + "','" 
-                + clothing.getColour() + ")";
+                + clothing.getColour() + "')";
         ProductDB productDB = new ProductDB();
         productDB.insertProduct(clothing);
         try

@@ -145,7 +145,7 @@ public class ProductDB
                 + product.getRentPrice() + "','" 
                 + product.getCountryOfOrigin() + "','" 
                 + product.getMinStock() + "','" 
-                + product.getSupplier().getId() + ")";
+                + product.getSupplier().getId() + "')";
         try
         {
             con.setAutoCommit(false);

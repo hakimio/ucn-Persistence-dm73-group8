@@ -160,7 +160,7 @@ public class PurchaseDB
                 +"VALUES('"
                 + purchase.getId() + "','" 
                 + purchase.getProduct().getId() + "','" 
-                + purchase.getSalesOrder().getId() + ")";
+                + purchase.getSalesOrder().getId() + "')";
         try
         {
             con.setAutoCommit(false);

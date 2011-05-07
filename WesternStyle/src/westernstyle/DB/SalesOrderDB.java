@@ -145,7 +145,7 @@ public class SalesOrderDB
                 + salesOrder.getDeliveryStatus() + "','" 
                 + salesOrder.getDeliveryDate() + "','" 
                 + salesOrder.getCustomer().getId() + "','" 
-                + salesOrder.getInvoice().getId() + ")";
+                + salesOrder.getInvoice().getId() + "')";
         try
         {
             con.setAutoCommit(false);

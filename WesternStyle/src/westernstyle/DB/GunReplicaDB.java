@@ -143,7 +143,7 @@ public class GunReplicaDB
                 + nextId + "','" 
                 + gunReplica.getId() + "','" 
                 + gunReplica.getFabric() + "','" 
-                + gunReplica.getCalibre() + ")";
+                + gunReplica.getCalibre() + "')";
         ProductDB productDB = new ProductDB();
         productDB.insertProduct(gunReplica);
         try

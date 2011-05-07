@@ -134,7 +134,7 @@ public class SupplierDB
                 + supplier.getAddress() + "','" 
                 + supplier.getPhoneno() + "','" 
                 + supplier.getCountry() + "','" 
-                + supplier.getEmail() + ")";
+                + supplier.getEmail() + "')";
         try
         {
             con.setAutoCommit(false);
