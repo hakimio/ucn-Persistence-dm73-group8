@@ -4,6 +4,8 @@
  */
 package westernstyle;
 
+import westernstyle.gui.GUI;
+
 /**
  *
  * @author tomas
@@ -15,6 +17,6 @@ public class WesternStyle
      */
     public static void main(String[] args)
     {
-        // TODO code application logic here
+        GUI gui = new GUI();
     }
 }
