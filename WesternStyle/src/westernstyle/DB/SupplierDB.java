@@ -167,11 +167,11 @@ public class SupplierDB
     {
         int rc = -1;
         String query = "Update customer SET "+
-                "name ='" + supplier.getName() + "'"+
-                "address ='" + supplier.getAddress() + "'"+
-                "phoneNo ='" + supplier.getPhoneno() + "'"+
-                "country ='" + supplier.getCountry() + "'"+
-                "email ='" + supplier.getEmail() + "'"+
+                "name ='" + supplier.getName() + "', "+
+                "address ='" + supplier.getAddress() + "', "+
+                "phoneNo ='" + supplier.getPhoneno() + "', "+
+                "country ='" + supplier.getCountry() + "', "+
+                "email ='" + supplier.getEmail() + "' "+
                 "WHERE id="+supplier.getId();
         try
         {

@@ -178,13 +178,13 @@ public class ProductDB
     {
         int rc = -1;
         String query = "Update product SET "+
-                "name ='" + product.getName() + "'"+
-                "purchasePrice ='" + product.getPurchasePrice() + "'"+
-                "salesPrice ='" + product.getSalesPrice() + "'"+
-                "rentPrice ='" + product.getRentPrice() + "'"+
-                "countryOfOrigin ='" + product.getCountryOfOrigin() + "'"+
-                "minStock ='" + product.getMinStock() + "'"+
-                "supplierId ='" + product.getSupplier().getId() + "'"+
+                "name ='" + product.getName() + "', "+
+                "purchasePrice ='" + product.getPurchasePrice() + "', "+
+                "salesPrice ='" + product.getSalesPrice() + "', "+
+                "rentPrice ='" + product.getRentPrice() + "', "+
+                "countryOfOrigin ='" + product.getCountryOfOrigin() + "', "+
+                "minStock ='" + product.getMinStock() + "', "+
+                "supplierId ='" + product.getSupplier().getId() + "' "+
                 "WHERE id="+product.getId();
         try
         {

@@ -193,8 +193,8 @@ public class PurchaseDB
     {
         int rc = -1;
         String query = "Update purchase SET "+
-                "productId ='" + purchase.getProduct().getId() + "'"+
-                "salesOrderId ='" + purchase.getSalesOrder().getId() + "'"+
+                "productId ='" + purchase.getProduct().getId() + "', "+
+                "salesOrderId ='" + purchase.getSalesOrder().getId() + "' "+
                 "WHERE id=" + purchase.getId();
         try
         {

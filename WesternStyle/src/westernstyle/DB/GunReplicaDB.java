@@ -178,8 +178,8 @@ public class GunReplicaDB
     {
         int rc = -1;
         String query = "Update gunReplica SET "+
-                "fabric ='" + gunReplica.getFabric() + "'"+
-                "calibre ='" + gunReplica.getCalibre() + "'"+
+                "fabric ='" + gunReplica.getFabric() + "', "+
+                "calibre ='" + gunReplica.getCalibre() + "' "+
                 "WHERE productId="+ gunReplica.getId();
         ProductDB productDB = new ProductDB();
         productDB.updateProduct(gunReplica);

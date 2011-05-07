@@ -20,7 +20,10 @@ public class CustomerDB
     
     public ArrayList<Customer> getCustomersByName(String name)
     {
-        return where("name ="+name);
+        if (!name.isEmpty())
+            return where("name='"+name+"'");
+        else
+            return getCustomers();
     }
     
     public Customer getCustomer(int id)
@@ -172,11 +175,11 @@ public class CustomerDB
     {
         int rc = -1;
         String query = "Update customer SET "+
-                "name ='" + customer.getName() + "'"+
-                "address ='" + customer.getAddress() + "'"+
-                "phoneNo ='" + customer.getPhoneno() + "'"+
-                "city ='" + customer.getCity() + "'"+
-                "zipCode ='" + customer.getOrderZipCode() + "'"+
+                "name ='" + customer.getName() + "', "+
+                "address ='" + customer.getAddress() + "', "+
+                "phoneNo ='" + customer.getPhoneno() + "', "+
+                "city ='" + customer.getCity() + "', "+
+                "zipCode ='" + customer.getOrderZipCode() + "' "+
                 "WHERE id="+customer.getId();
         try
         {

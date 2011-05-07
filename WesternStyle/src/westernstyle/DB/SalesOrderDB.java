@@ -178,12 +178,12 @@ public class SalesOrderDB
     {
         int rc = -1;
         String query = "Update salesOrder SET "+
-                "date ='" + salesOrder.getDate() + "'"+
-                "amount ='" + salesOrder.getAmount() + "'"+
-                "deliveryStatus ='" + salesOrder.getDeliveryStatus() + "'"+
-                "deliveryDate ='" + salesOrder.getDeliveryDate() + "'"+
-                "customerId ='" + salesOrder.getCustomer().getId() + "'"+
-                "invoiceId ='" + salesOrder.getInvoice().getId() + "'"+
+                "date ='" + salesOrder.getDate() + "', "+
+                "amount ='" + salesOrder.getAmount() + "', "+
+                "deliveryStatus ='" + salesOrder.getDeliveryStatus() + "', "+
+                "deliveryDate ='" + salesOrder.getDeliveryDate() + "', "+
+                "customerId ='" + salesOrder.getCustomer().getId() + "', "+
+                "invoiceId ='" + salesOrder.getInvoice().getId() + "' "+
                 "WHERE id="+salesOrder.getId();
         try
         {

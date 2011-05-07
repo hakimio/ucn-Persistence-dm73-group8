@@ -178,8 +178,8 @@ public class EquipmentDB
     {
         int rc = -1;
         String query = "Update equipment SET "+
-                "type ='" + equipment.getType() + "'"+
-                "description ='" + equipment.getDescription() + "'"+
+                "type ='" + equipment.getType() + "', "+
+                "description ='" + equipment.getDescription() + "' "+
                 "WHERE productId="+ equipment.getId();
         ProductDB productDB = new ProductDB();
         productDB.updateProduct(equipment);

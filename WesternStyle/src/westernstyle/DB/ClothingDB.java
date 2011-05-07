@@ -179,8 +179,8 @@ public class ClothingDB
     {
         int rc = -1;
         String query = "Update clothing SET "+
-                "size ='" + clothing.getSize() + "'"+
-                "colour ='" + clothing.getColour() + "'"+
+                "size ='" + clothing.getSize() + "', "+
+                "colour ='" + clothing.getColour() + "' "+
                 "WHERE productId="+clothing.getId();
         ProductDB productDB = new ProductDB();
         productDB.updateProduct(clothing);

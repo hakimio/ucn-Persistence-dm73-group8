@@ -51,29 +51,38 @@ public class CustomerTab extends JPanel
         });
         
         final JTextField searchField = new JTextField();
-        JLabel searchLabel = new JLabel("Name: ");
-        
-        KeyListener searchKeyListener = new KeyListener() 
+        JLabel searchLabel = new JLabel(" Name: ");
+        JButton remove = new JButton("Remove");
+        remove.addActionListener(new ActionListener() 
         {
             @Override
-            public void keyTyped(KeyEvent e)
+            public void actionPerformed(ActionEvent e)
+            {
+                if (customerDB.getCustomers().isEmpty())
+                    showError("No customers have been added.",
+                            "Error");
+                else if (custTable.getSelectedRowCount() == 0)
+                    showError("Customer must be selected", "Error");
+                else
+                    removeCustomer(custTable.getSelectedRow()+1);
+            }
+        });
+        JButton search = new JButton("Search");
+        search.addActionListener(new ActionListener() 
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
             {
                 showSearchResults(searchField.getText());
             }
-
-            @Override
-            public void keyPressed(KeyEvent e) {}
-
-            @Override
-            public void keyReleased(KeyEvent e) {}
-        };
-        searchField.addKeyListener(searchKeyListener);
-        
+        });
         JToolBar toolBar = new JToolBar();
         toolBar.add(add);
         toolBar.add(edit);
+        toolBar.add(remove);
         toolBar.add(searchLabel);
         toolBar.add(searchField);
+        toolBar.add(search);
 
         JPanel custPanel = new JPanel();
         custPanel.setLayout(new BorderLayout());
@@ -99,6 +108,23 @@ public class CustomerTab extends JPanel
         return table;
     }
     
+    private void removeCustomer(int id)
+    {
+        Customer customer = customerDB.getCustomer(id);
+        String custName = customer.getName();
+        int choice = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to remove \""+ custName +"\" ?",
+                "Removal",
+                JOptionPane.YES_NO_OPTION);
+
+        if (choice == 0)
+        {
+            customerDB.delete(id);
+            updateCustTable();
+        }
+    }
+    
     private void showSearchResults(String name)
     {
         DefaultTableModel model = (DefaultTableModel) custTable.getModel();
@@ -106,7 +132,7 @@ public class CustomerTab extends JPanel
             model.removeRow(0);
         
         int custCount = customerDB.getCustomersByName(name).size();
-        for (int i = 1; i <= custCount; i++)
+        for (int i = 0; i < custCount; i++)
         {
             Customer customer = customerDB.getCustomersByName(name).get(i);
             Object[] custData = {i, customer.getId(),
@@ -237,6 +263,7 @@ public class CustomerTab extends JPanel
         city.setText(customer.getCity());
         final JTextField phoneNr = ((JTextField)myPanel.getComponent(9));
         phoneNr.setText(customer.getPhoneno());
+        
 
         JButton okButton = ((JButton)myPanel.getComponent(10));
         okButton.addActionListener(new ActionListener()
@@ -244,6 +271,11 @@ public class CustomerTab extends JPanel
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                customer.setName(name.getText());
+                customer.setAddress(address.getText());
+                customer.setOrderZipCode(Integer.parseInt(zipCode.getText()));
+                customer.setCity(city.getText());
+                customer.setPhoneno(phoneNr.getText());
                 customerDB.updateCustomer(customer);
                 editCustDialog.setVisible(false);
                 updateCustTable();
