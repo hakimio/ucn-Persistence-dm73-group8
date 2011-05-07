@@ -18,6 +18,11 @@ public class CustomerDB
         return where("");
     }
     
+    public ArrayList<Customer> getCustomersByName(String name)
+    {
+        return where("name ="+name);
+    }
+    
     public Customer getCustomer(int id)
     {
         return singleWhere("id = "+id);

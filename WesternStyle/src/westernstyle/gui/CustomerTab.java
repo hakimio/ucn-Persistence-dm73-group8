@@ -2,8 +2,7 @@ package westernstyle.gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.text.NumberFormat;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
@@ -50,10 +49,31 @@ public class CustomerTab extends JPanel
                     editCustomer(custTable.getSelectedRow()+1);
             }
         });
+        
+        final JTextField searchField = new JTextField();
+        JLabel searchLabel = new JLabel("Name: ");
+        
+        KeyListener searchKeyListener = new KeyListener() 
+        {
+            @Override
+            public void keyTyped(KeyEvent e)
+            {
+                showSearchResults(searchField.getText());
+            }
 
+            @Override
+            public void keyPressed(KeyEvent e) {}
+
+            @Override
+            public void keyReleased(KeyEvent e) {}
+        };
+        searchField.addKeyListener(searchKeyListener);
+        
         JToolBar toolBar = new JToolBar();
         toolBar.add(add);
         toolBar.add(edit);
+        toolBar.add(searchLabel);
+        toolBar.add(searchField);
 
         JPanel custPanel = new JPanel();
         custPanel.setLayout(new BorderLayout());
@@ -77,6 +97,24 @@ public class CustomerTab extends JPanel
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         return table;
+    }
+    
+    private void showSearchResults(String name)
+    {
+        DefaultTableModel model = (DefaultTableModel) custTable.getModel();
+        while (model.getRowCount() > 0)
+            model.removeRow(0);
+        
+        int custCount = customerDB.getCustomersByName(name).size();
+        for (int i = 1; i <= custCount; i++)
+        {
+            Customer customer = customerDB.getCustomersByName(name).get(i);
+            Object[] custData = {i, customer.getId(),
+                customer.getName(), customer.getAddress(),
+                customer.getOrderZipCode(), customer.getCity(), 
+                customer.getPhoneno()};
+            model.addRow(custData);
+        }
     }
     
     private void updateCustTable()
