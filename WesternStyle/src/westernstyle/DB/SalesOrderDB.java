@@ -41,12 +41,6 @@ public class SalesOrderDB
             }
 
             stmt.close();
-            CustomerDB customerDB = new CustomerDB();
-            int customerId = salesOrder.getCustomer().getId();
-            salesOrder.setCustomer(customerDB.getCustomer(customerId));
-            InvoiceDB invoiceDB = new InvoiceDB();
-            int invoiceId = salesOrder.getInvoice().getId();
-            salesOrder.setInvoice(invoiceDB.getInvoice(invoiceId));
         }
         catch (Exception e)
         {

@@ -18,6 +18,11 @@ public class GunReplicaDB
         return where("");
     }
     
+    public GunReplica getGunReplicaByProductId(int productId)
+    {
+        return singleWhere("productId = " + productId);
+    }
+    
     public GunReplica getGunReplica(int id)
     {
         return singleWhere("id = "+id);

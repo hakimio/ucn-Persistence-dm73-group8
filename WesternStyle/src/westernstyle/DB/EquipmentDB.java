@@ -17,6 +17,11 @@ public class EquipmentDB
     {
         return where("");
     }
+
+    public Equipment getEquipmentByProductId(int productId)
+    {
+        return singleWhere("productId = "+productId);
+    }
     
     public Equipment getEquipment(int id)
     {
