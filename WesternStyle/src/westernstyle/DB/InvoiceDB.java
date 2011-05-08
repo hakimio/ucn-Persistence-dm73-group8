@@ -17,7 +17,14 @@ public class InvoiceDB
     {
         return where("");
     }
-    
+
+    public ArrayList<Invoice> getInvoicesByNr(int invoiceNr)
+    {
+        if (invoiceNr != 0)
+            return where("invoiceNo = "+invoiceNr);
+        else
+            return getInvoices();
+    }
     public Invoice getInvoice(int id)
     {
         return singleWhere("id = "+id);
@@ -129,7 +136,7 @@ public class InvoiceDB
                 +"VALUES('"
                 + invoice.getId() + "','" 
                 + invoice.getInvoiceNo() + "','" 
-                + invoice.getPaymentDate() + "','" 
+                + new Date (invoice.getPaymentDate().getTime()) + "','" 
                 + invoice.getAmount() + "')";
         try
         {
@@ -164,7 +171,7 @@ public class InvoiceDB
         int rc = -1;
         String query = "Update invoice SET "+
                 "invoiceNo ='" + invoice.getInvoiceNo() + "', "+
-                "paymentDate ='" + invoice.getPaymentDate() + "', "+
+                "paymentDate ='" + new Date(invoice.getPaymentDate().getTime()) + "', "+
                 "amount ='" + invoice.getAmount() + "' "+
                 "WHERE id="+invoice.getId();
         try
