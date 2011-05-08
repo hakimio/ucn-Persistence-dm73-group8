@@ -3,7 +3,6 @@ package westernstyle.gui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.text.NumberFormat;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -46,7 +45,8 @@ public class CustomerTab extends JPanel
                 else if (custTable.getSelectedRowCount() == 0)
                     showError("Customer must be selected", "Error");
                 else
-                    editCustomer(custTable.getSelectedRow()+1);
+                    editCustomer((int)custTable.
+                            getValueAt(custTable.getSelectedRow(), 1));
             }
         });
         
@@ -64,7 +64,8 @@ public class CustomerTab extends JPanel
                 else if (custTable.getSelectedRowCount() == 0)
                     showError("Customer must be selected", "Error");
                 else
-                    removeCustomer(custTable.getSelectedRow()+1);
+                    removeCustomer((int)custTable.
+                            getValueAt(custTable.getSelectedRow(), 1));
             }
         });
         JButton search = new JButton("Search");
@@ -153,11 +154,17 @@ public class CustomerTab extends JPanel
         for (int i = 1; i <= custCount; i++)
         {
             Customer customer = customerDB.getCustomer(i);
-            Object[] custData = {i, customer.getId(),
-                customer.getName(), customer.getAddress(),
-                customer.getOrderZipCode(), customer.getCity(), 
-                customer.getPhoneno()};
-            model.addRow(custData);
+            
+            if (customer != null)
+            {
+                Object[] custData = {i, customer.getId(),
+                    customer.getName(), customer.getAddress(),
+                    customer.getOrderZipCode(), customer.getCity(), 
+                    customer.getPhoneno()};
+                model.addRow(custData);
+            }
+            else
+                custCount++;
         }
     }
     
@@ -168,7 +175,7 @@ public class CustomerTab extends JPanel
         
         final JTextField name = ((JTextField)myPanel.getComponent(1));
         final JTextField address = ((JTextField)myPanel.getComponent(3));
-        final JFormattedTextField zipCode = ((JFormattedTextField)myPanel.
+        final JSpinner zipCode = ((JSpinner)myPanel.
                 getComponent(5));
         final JTextField city = ((JTextField)myPanel.getComponent(7));
         final JTextField phoneNr = ((JTextField)myPanel.getComponent(9));
@@ -185,7 +192,7 @@ public class CustomerTab extends JPanel
                 customer.setName(name.getText());
                 customer.setCity(city.getText());
                 customer.setPhoneno(phoneNr.getText());
-                customer.setOrderZipCode(Integer.parseInt(zipCode.getText()));
+                customer.setOrderZipCode((Integer)zipCode.getValue());
                 customerDB.insertCustomer(customer);
                 addCustDialog.setVisible(false);
                 updateCustTable();
@@ -207,9 +214,8 @@ public class CustomerTab extends JPanel
         final JTextField address = new JTextField();
         final JTextField phoneNr = new JTextField();
         final JTextField city = new JTextField();
-        NumberFormat numberFormat = NumberFormat.getNumberInstance();
-        numberFormat.setGroupingUsed(false);
-        final JFormattedTextField zipCode = new JFormattedTextField(numberFormat);
+        SpinnerNumberModel model = new SpinnerNumberModel(1000, 1000, 9999, 1);
+        final JSpinner zipCode = new JSpinner(model);
         final JComponent[] inputs = new JComponent[] {name, address, zipCode,
             city, phoneNr};
         final JComponent[] labels = new JComponent[] {new JLabel("Name"),
@@ -256,7 +262,7 @@ public class CustomerTab extends JPanel
         name.setText(customer.getName());
         final JTextField address = ((JTextField)myPanel.getComponent(3));
         address.setText(customer.getAddress());
-        final JFormattedTextField zipCode = ((JFormattedTextField)myPanel.
+        final JSpinner zipCode = ((JSpinner)myPanel.
                 getComponent(5));
         zipCode.setValue(customer.getOrderZipCode());
         final JTextField city = ((JTextField)myPanel.getComponent(7));
@@ -273,7 +279,7 @@ public class CustomerTab extends JPanel
             {
                 customer.setName(name.getText());
                 customer.setAddress(address.getText());
-                customer.setOrderZipCode(Integer.parseInt(zipCode.getText()));
+                customer.setOrderZipCode((Integer)zipCode.getValue());
                 customer.setCity(city.getText());
                 customer.setPhoneno(phoneNr.getText());
                 customerDB.updateCustomer(customer);

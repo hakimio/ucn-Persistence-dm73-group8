@@ -3,15 +3,12 @@ package westernstyle.gui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.Console;
 import java.util.Date;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
 import net.sf.nachocalendar.CalendarFactory;
-import net.sf.nachocalendar.components.CalendarPanel;
 import net.sf.nachocalendar.components.DateField;
-import net.sf.nachocalendar.components.DatePanel;
 
 import westernstyle.core.Invoice;
 import westernstyle.DB.InvoiceDB;
@@ -51,7 +48,7 @@ public class InvoiceTab extends JPanel
                 else if (table.getSelectedRowCount() == 0)
                     showError("Invoice must be selected", "Error");
                 else
-                    edit(table.getSelectedRow()+1);
+                    edit((int)table.getValueAt(table.getSelectedRow(), 1));
             }
         });
         SpinnerNumberModel model = new SpinnerNumberModel(0, 0, 999, 1);
@@ -69,7 +66,8 @@ public class InvoiceTab extends JPanel
                 else if (table.getSelectedRowCount() == 0)
                     showError("Invoice must be selected", "Error");
                 else
-                    removeInvoice(table.getSelectedRow()+1);
+                    removeInvoice((int)table.
+                            getValueAt(table.getSelectedRow(), 1));
             }
         });
         JButton search = new JButton("Search");
@@ -158,10 +156,15 @@ public class InvoiceTab extends JPanel
         for (int i = 1; i <= count; i++)
         {
             Invoice invoice = invoiceDB.getInvoice(i);
-            Object[] data = {i, invoice.getId(),
-                invoice.getInvoiceNo(), invoice.getPaymentDate(),
-                invoice.getAmount()};
-            model.addRow(data);
+            if (invoice != null)
+            {
+                Object[] data = {i, invoice.getId(),
+                    invoice.getInvoiceNo(), invoice.getPaymentDate(),
+                    invoice.getAmount()};
+                model.addRow(data);
+            }
+            else
+                count++;
         }
     }
     

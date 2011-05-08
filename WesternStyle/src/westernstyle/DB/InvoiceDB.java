@@ -169,9 +169,10 @@ public class InvoiceDB
     public int updateInvoice(Invoice invoice)
     {
         int rc = -1;
+        Date paymentDate = new Date(invoice.getPaymentDate().getTime());
         String query = "Update invoice SET "+
                 "invoiceNo ='" + invoice.getInvoiceNo() + "', "+
-                "paymentDate ='" + new Date(invoice.getPaymentDate().getTime()) + "', "+
+                "paymentDate ='" + paymentDate + "', "+
                 "amount ='" + invoice.getAmount() + "' "+
                 "WHERE id="+invoice.getId();
         try

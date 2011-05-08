@@ -14,6 +14,7 @@ public class GUI extends JFrame
         JTabbedPane jTabbedPane = new JTabbedPane();
         jTabbedPane.add("Customers", new CustomerTab());
         jTabbedPane.add("Invoices", new InvoiceTab());
+        jTabbedPane.add("Sales Orders", new SalesOrderTab());
         
         add(jTabbedPane);
         pack();

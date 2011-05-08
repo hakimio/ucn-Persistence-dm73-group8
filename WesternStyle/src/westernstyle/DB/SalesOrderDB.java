@@ -19,7 +19,14 @@ public class SalesOrderDB
     {
         return where("");
     }
-    
+
+    public ArrayList<SalesOrder> getSalesOrdersByStatus(String deliveryStatus)
+    {
+        if (!deliveryStatus.isEmpty())
+            return where("deliveryStatus = '" + deliveryStatus + "'");
+        else
+            return getSalesOrders();
+    }
     public SalesOrder getSalesOrder(int id)
     {
         return singleWhere("id = "+id);
@@ -141,9 +148,10 @@ public class SalesOrderDB
                 + "deliveryDate,customerId,InvoiceId)"
                 +"VALUES('"
                 + salesOrder.getId() + "','" 
-                + salesOrder.getDate() + "','" 
+                + new Date(salesOrder.getDate().getTime()) + "','" 
+                + salesOrder.getAmount() + "', '"
                 + salesOrder.getDeliveryStatus() + "','" 
-                + salesOrder.getDeliveryDate() + "','" 
+                + new Date(salesOrder.getDeliveryDate().getTime()) + "','" 
                 + salesOrder.getCustomer().getId() + "','" 
                 + salesOrder.getInvoice().getId() + "')";
         try
@@ -177,11 +185,12 @@ public class SalesOrderDB
     public int updateSalesOrder(SalesOrder salesOrder)
     {
         int rc = -1;
+        Date deliveryDate = new Date(salesOrder.getDeliveryDate().getTime());
         String query = "Update salesOrder SET "+
-                "date ='" + salesOrder.getDate() + "', "+
+                "date ='" + new Date(salesOrder.getDate().getTime()) + "', "+
                 "amount ='" + salesOrder.getAmount() + "', "+
                 "deliveryStatus ='" + salesOrder.getDeliveryStatus() + "', "+
-                "deliveryDate ='" + salesOrder.getDeliveryDate() + "', "+
+                "deliveryDate ='" + deliveryDate + "', "+
                 "customerId ='" + salesOrder.getCustomer().getId() + "', "+
                 "invoiceId ='" + salesOrder.getInvoice().getId() + "' "+
                 "WHERE id="+salesOrder.getId();
