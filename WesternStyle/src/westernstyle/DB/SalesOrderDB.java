@@ -19,6 +19,16 @@ public class SalesOrderDB
     {
         return where("");
     }
+    
+    public ArrayList<SalesOrder> getSalesOrdersByCustomerId(int id)
+    {
+        return where("customerId = " + id);
+    }
+    
+    public ArrayList<SalesOrder> getSalesOrdersByInvoiceId(int id)
+    {
+        return where("invoiceId = "+ id);
+    }
 
     public ArrayList<SalesOrder> getSalesOrdersByStatus(String deliveryStatus)
     {

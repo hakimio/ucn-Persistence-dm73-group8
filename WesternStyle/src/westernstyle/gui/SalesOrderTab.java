@@ -159,7 +159,7 @@ public class SalesOrderTab extends JPanel
         }
     }
     
-    private void updateTable()
+    public void updateTable()
     {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         while (model.getRowCount() > 0)
@@ -210,9 +210,21 @@ public class SalesOrderTab extends JPanel
                 CustomerDB customerDB = new CustomerDB();
                 int id = (Integer)customerId.getValue(); 
                 Customer customer = customerDB.getCustomer(id);
+                if (customer == null)
+                {
+                    showError("Customer with specified id doesn't exist!", 
+                            "Error");
+                    return;
+                }
                 InvoiceDB invoiceDB = new InvoiceDB();
                 id = (Integer)invoiceId.getValue();
                 Invoice invoice = invoiceDB.getInvoice(id);
+                if (invoice == null)
+                {
+                    showError("invoice with specified id doesn't exist!", 
+                            "Error");
+                    return;
+                }
                 salesOrder.setInvoice(invoice);
                 salesOrder.setCustomer(customer);
                 salesOrderDB.insertSalesOrder(salesOrder);
@@ -239,13 +251,9 @@ public class SalesOrderTab extends JPanel
         JTextField deliveryStatus = new JTextField();
         final DateField deliveryDate = CalendarFactory.createDateField();
         date.setValue(new Date());
-        CustomerDB customerDB = new CustomerDB();
-        int nrOfCustomers = customerDB.getCustomers().size();
-        model = new SpinnerNumberModel(1, 1, nrOfCustomers, 1);
+        model = new SpinnerNumberModel(1, 1, 999, 1);
         JSpinner customerId = new JSpinner(model);
-        InvoiceDB invoiceDB = new InvoiceDB();
-        int nrOfInvoices = invoiceDB.getInvoices().size();
-        model = new SpinnerNumberModel(1, 1, nrOfInvoices, 1);
+        model = new SpinnerNumberModel(1, 1, 999, 1);
         JSpinner invoiceId = new JSpinner(model);
         
         final JComponent[] inputs = new JComponent[] {date, amount, 

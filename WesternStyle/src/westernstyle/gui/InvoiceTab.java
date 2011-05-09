@@ -3,6 +3,7 @@ package westernstyle.gui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
@@ -12,16 +13,20 @@ import net.sf.nachocalendar.components.DateField;
 
 import westernstyle.core.Invoice;
 import westernstyle.DB.InvoiceDB;
+import westernstyle.DB.SalesOrderDB;
+import westernstyle.core.SalesOrder;
 import westernstyle.DB.GetMax;
 
 public class InvoiceTab extends JPanel
 {
     private JTable table;
     private InvoiceDB invoiceDB;
+    private SalesOrderTab salesOrderTab;
     
-    public InvoiceTab()
+    public InvoiceTab(SalesOrderTab salesOrderTab)
     {
         invoiceDB = new InvoiceDB();
+        this.salesOrderTab = salesOrderTab;
         
         this.setLayout(new GridLayout(1, 0));
         String columns[] = {"#", "id", "Invoice Nr", "Payment Date", "Amount"};
@@ -115,12 +120,36 @@ public class InvoiceTab extends JPanel
     {
         Invoice invoice = invoiceDB.getInvoice(id);
         int invoiceNr = invoice.getInvoiceNo();
-        int choice = JOptionPane.showConfirmDialog(
+        int choice;
+        SalesOrderDB salesOrderDB = new SalesOrderDB();
+        ArrayList<SalesOrder> salesOrders = salesOrderDB.
+                getSalesOrdersByInvoiceId(id);
+        if (!salesOrders.isEmpty())
+        {
+            choice = JOptionPane.showConfirmDialog(
+                    this,
+                    "Removing invoice nr \""+ invoiceNr +"\" will also remove "
+                    + "all associated sales orders. Are you sure you want to "
+                    + "do that?",
+                    "Removal",
+                    JOptionPane.YES_NO_OPTION);
+            if (choice == 0)
+            {
+                for (int i = 0; i < salesOrders.size(); i++)
+                {
+                    salesOrderDB.delete(salesOrders.get(i).getId());
+                }
+                salesOrderTab.updateTable();
+            }   
+        }
+        else
+        {
+        choice = JOptionPane.showConfirmDialog(
                 this,
                 "Are you sure you want to remove invoice nr \""
                 + invoiceNr + "\" ?", "Removal",
                 JOptionPane.YES_NO_OPTION);
-
+        }
         if (choice == 0)
         {
             invoiceDB.delete(id);

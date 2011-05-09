@@ -3,20 +3,25 @@ package westernstyle.gui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
 import westernstyle.core.Customer;
 import westernstyle.DB.CustomerDB;
+import westernstyle.DB.SalesOrderDB;
+import westernstyle.core.SalesOrder;
 import westernstyle.DB.GetMax;
 
 public class CustomerTab extends JPanel
 {
     private JTable custTable;
     private CustomerDB customerDB;
+    private SalesOrderTab salesOrderTab;
     
-    public CustomerTab()
+    public CustomerTab(SalesOrderTab salesOrderTab)
     {
+        this.salesOrderTab = salesOrderTab;
         customerDB = new CustomerDB();
         
         this.setLayout(new GridLayout(1, 0));
@@ -112,13 +117,37 @@ public class CustomerTab extends JPanel
     private void removeCustomer(int id)
     {
         Customer customer = customerDB.getCustomer(id);
+        SalesOrderDB salesOrderDB = new SalesOrderDB();
+        ArrayList<SalesOrder> salesOrders = salesOrderDB.
+                getSalesOrdersByCustomerId(id);
+        int choice;
         String custName = customer.getName();
-        int choice = JOptionPane.showConfirmDialog(
-                this,
-                "Are you sure you want to remove \""+ custName +"\" ?",
-                "Removal",
-                JOptionPane.YES_NO_OPTION);
-
+        if (!salesOrders.isEmpty())
+        {
+            choice = JOptionPane.showConfirmDialog(
+                    this,
+                    "Removing customer \""+ custName +"\" will also remove all"
+                    + " associated sales orders. Are you sure you want to "
+                    + "do that?",
+                    "Removal",
+                    JOptionPane.YES_NO_OPTION);
+            if (choice == 0)
+            {
+                for (int i = 0; i < salesOrders.size(); i++)
+                {
+                    salesOrderDB.delete(salesOrders.get(i).getId());
+                }
+                salesOrderTab.updateTable();
+            }
+        }
+        else
+        {
+            choice = JOptionPane.showConfirmDialog(
+                    this,
+                    "Are you sure you want to remove \""+ custName +"\" ?",
+                    "Removal",
+                    JOptionPane.YES_NO_OPTION);
+        }
         if (choice == 0)
         {
             customerDB.delete(id);

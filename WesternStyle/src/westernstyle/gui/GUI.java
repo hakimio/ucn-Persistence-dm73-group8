@@ -12,9 +12,10 @@ public class GUI extends JFrame
         setPreferredSize(new Dimension(640, 480));
         
         JTabbedPane jTabbedPane = new JTabbedPane();
-        jTabbedPane.add("Customers", new CustomerTab());
-        jTabbedPane.add("Invoices", new InvoiceTab());
-        jTabbedPane.add("Sales Orders", new SalesOrderTab());
+        SalesOrderTab salesOrderTab = new SalesOrderTab();
+        jTabbedPane.add("Customers", new CustomerTab(salesOrderTab));
+        jTabbedPane.add("Invoices", new InvoiceTab(salesOrderTab));
+        jTabbedPane.add("Sales Orders", salesOrderTab);
         
         add(jTabbedPane);
         pack();
