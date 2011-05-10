@@ -11,12 +11,16 @@ values(3, 'Micheal Jordon', 'Marine 12', '+12313',
 'New York', 5500);
 
 insert into invoice (id, invoiceNo, paymentDate, amount)
-values(1, 123, CAST('20090303 00:00:00' AS datetime), 20);
+values(1, 123, CAST('2009-03-03 00:00:00' AS datetime), 20);
 
 insert into salesOrder(id, date, amount, deliveryStatus, deliveryDate, 
 customerId, invoiceId) values(1, 
-CAST('20091012 00:00:00' AS datetime), 321, 'delivered', 
-CAST('20091121 00:00:00' AS datetime), 1, 1);
+CAST('2009-10-12 00:00:00' AS datetime), 321, 'delivered', 
+CAST('2009-11-21 00:00:00' AS datetime), 1, 1);
+
+insert into supplier(id, name, address, country, phoneNo, email) 
+values(1, 'cowboy heaven', 'vesterbro 12', 
+'Denmark', '+7263476', 'cowboy.heaven@cowboy.dk');
 
 insert into product(id, name, purchasePrice, salesPrice, rentPrice, 
 countryOfOrigin, minStock, supplierId) values(1, 'cowboy hat', 
@@ -34,12 +38,14 @@ insert into clothing(id, productId, size, colour)
 values(1, 1, 12, 'red');
 
 insert into equipment(id, productId, type, description) 
-values(1, 2, 'flag', 'denmark\'s flag');
+values(1, 2, 'flag', 'denmarks flag');
 
 insert into gunReplica(id, productId, fabric, calibre) 
 values(1, 3, 'wood', '9');
 
-insert into supplier(id, name, address, country, phoneNo, email) 
-values(1, 'cowboy heaven', 'vesterbro 12', 
-'Denmark', '+7263476', 'cowboy.heaven@cowboy.dk');
-
+insert into purchase(id, salesOrderId, productId)
+values(1,1,1);
+insert into purchase(id, salesOrderId, productId)
+values(2,1,2);
+insert into purchase(id, salesOrderId, productId)
+values(3,1,3);

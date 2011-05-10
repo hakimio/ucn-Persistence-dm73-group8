@@ -49,9 +49,9 @@ CREATE TABLE product
 (
 	id integer,
 	name NvarChar(512),
-	purchasePrice double,
-	salesPrice double,
-	rentPrice double,
+	purchasePrice float,
+	salesPrice float,
+	rentPrice float,
 	countryOfOrigin NvarChar(512),
 	minStock integer,
 	supplierId integer,
