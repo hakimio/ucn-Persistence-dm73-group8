@@ -50,8 +50,8 @@ public class CustomerTab extends JPanel
                 else if (custTable.getSelectedRowCount() == 0)
                     showError("Customer must be selected", "Error");
                 else
-                    editCustomer((int)custTable.
-                            getValueAt(custTable.getSelectedRow(), 1));
+                    editCustomer((Integer)custTable.
+                            getValueAt(custTable.getSelectedRow(),1));
             }
         });
         
@@ -69,7 +69,7 @@ public class CustomerTab extends JPanel
                 else if (custTable.getSelectedRowCount() == 0)
                     showError("Customer must be selected", "Error");
                 else
-                    removeCustomer((int)custTable.
+                    removeCustomer((Integer)custTable.
                             getValueAt(custTable.getSelectedRow(), 1));
             }
         });

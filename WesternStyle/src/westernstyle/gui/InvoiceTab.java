@@ -53,7 +53,7 @@ public class InvoiceTab extends JPanel
                 else if (table.getSelectedRowCount() == 0)
                     showError("Invoice must be selected", "Error");
                 else
-                    edit((int)table.getValueAt(table.getSelectedRow(), 1));
+                    edit((Integer)table.getValueAt(table.getSelectedRow(), 1));
             }
         });
         SpinnerNumberModel model = new SpinnerNumberModel(0, 0, 999, 1);
@@ -71,7 +71,7 @@ public class InvoiceTab extends JPanel
                 else if (table.getSelectedRowCount() == 0)
                     showError("Invoice must be selected", "Error");
                 else
-                    removeInvoice((int)table.
+                    removeInvoice((Integer)table.
                             getValueAt(table.getSelectedRow(), 1));
             }
         });

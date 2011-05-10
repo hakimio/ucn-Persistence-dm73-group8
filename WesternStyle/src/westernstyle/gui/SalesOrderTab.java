@@ -57,7 +57,7 @@ public class SalesOrderTab extends JPanel
             {
                 if (salesOrdertable.getSelectedRowCount() > 0)
                 {
-                    int id = (int)salesOrdertable.getValueAt(salesOrdertable.
+                    int id = (Integer)salesOrdertable.getValueAt(salesOrdertable.
                                 getSelectedRow(), 1);
                     PurchaseDB purchaseDB = new PurchaseDB();
                     ArrayList<Purchase> purchases = purchaseDB.
@@ -98,7 +98,7 @@ public class SalesOrderTab extends JPanel
                 else if (salesOrdertable.getSelectedRowCount() == 0)
                     showError("Sales order must be selected", "Error");
                 else
-                    edit((int)salesOrdertable.getValueAt(salesOrdertable.
+                    edit((Integer)salesOrdertable.getValueAt(salesOrdertable.
                             getSelectedRow(), 1));
             }
         });
@@ -116,7 +116,7 @@ public class SalesOrderTab extends JPanel
                 else if (salesOrdertable.getSelectedRowCount() == 0)
                     showError("Sales order must be selected", "Error");
                 else
-                    removeSalesOrder((int)salesOrdertable.
+                    removeSalesOrder((Integer)salesOrdertable.
                             getValueAt(salesOrdertable.getSelectedRow(), 1));
             }
         });
