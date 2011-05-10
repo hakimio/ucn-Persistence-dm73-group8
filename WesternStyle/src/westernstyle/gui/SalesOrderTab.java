@@ -3,8 +3,11 @@ package westernstyle.gui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import net.sf.nachocalendar.CalendarFactory;
@@ -17,23 +20,55 @@ import westernstyle.DB.SalesOrderDB;
 import westernstyle.DB.CustomerDB;
 import westernstyle.DB.InvoiceDB;
 import westernstyle.DB.GetMax;
+import westernstyle.DB.PurchaseDB;
+import westernstyle.core.Clothing;
+import westernstyle.core.Equipment;
+import westernstyle.core.GunReplica;
+import westernstyle.core.Purchase;
+import westernstyle.core.Product;
 
 public class SalesOrderTab extends JPanel
 {
-    private JTable table;
+    private JTable salesOrdertable;
+    private JTable productTable;
     private SalesOrderDB salesOrderDB;
     
     public SalesOrderTab()
     {
         salesOrderDB = new SalesOrderDB();
         
+        //JPanel panel = new JPanel();
         this.setLayout(new GridLayout(1, 0));
-        String columns[] = {"#", "id", "Date", "Amount", "Delivery Status", 
-            "Delivery Date", "Customer Id", "Invoice Id"};
-        table = createTable(columns);
+        
+        String salesOrderColumns[] = {"#", "id", "Date", "Amount", 
+            "Delivery Status", "Delivery Date", "Customer Id", "Invoice Id"};
+        salesOrdertable = createTable(salesOrderColumns);
         updateTable();
+        
+        String productColumns[] = {"id", "Name", "Purchase Pr", "Sales Pr",
+            "Rent Pr", "Country", "MIN Stock", "Type"};
+        productTable = createTable(productColumns);
+        
+        salesOrdertable.getSelectionModel().addListSelectionListener(
+        new ListSelectionListener() 
+        {
+            @Override
+            public void valueChanged(ListSelectionEvent e)
+            {
+                if (salesOrdertable.getSelectedRowCount() > 0)
+                {
+                    int id = (int)salesOrdertable.getValueAt(salesOrdertable.
+                                getSelectedRow(), 1);
+                    PurchaseDB purchaseDB = new PurchaseDB();
+                    ArrayList<Purchase> purchases = purchaseDB.
+                            getPurchasesBySalesOrderId(id);
+                    updateProductTable(purchases);
+                }
+            }
+        });
 
-        JScrollPane scrollPane = new JScrollPane(table);
+        JScrollPane salesOrderScrollPane = new JScrollPane(salesOrdertable);
+        JScrollPane productScrollPane = new JScrollPane(productTable);
         JButton add = new JButton("Add");
         final CustomerDB customerDB = new CustomerDB();
         final InvoiceDB invoiceDB = new InvoiceDB();
@@ -60,10 +95,11 @@ public class SalesOrderTab extends JPanel
                 if (salesOrderDB.getSalesOrders().isEmpty())
                     showError("No sales orders have been added.",
                             "Error");
-                else if (table.getSelectedRowCount() == 0)
+                else if (salesOrdertable.getSelectedRowCount() == 0)
                     showError("Sales order must be selected", "Error");
                 else
-                    edit((int)table.getValueAt(table.getSelectedRow(), 1));
+                    edit((int)salesOrdertable.getValueAt(salesOrdertable.
+                            getSelectedRow(), 1));
             }
         });
         final JTextField searchField = new JTextField();
@@ -77,11 +113,11 @@ public class SalesOrderTab extends JPanel
                 if (salesOrderDB.getSalesOrders().isEmpty())
                     showError("No sales orders have been added.",
                             "Error");
-                else if (table.getSelectedRowCount() == 0)
+                else if (salesOrdertable.getSelectedRowCount() == 0)
                     showError("Sales order must be selected", "Error");
                 else
-                    removeSalesOrder((int)table.
-                            getValueAt(table.getSelectedRow(), 1));
+                    removeSalesOrder((int)salesOrdertable.
+                            getValueAt(salesOrdertable.getSelectedRow(), 1));
             }
         });
         JButton search = new JButton("Search");
@@ -101,12 +137,15 @@ public class SalesOrderTab extends JPanel
         toolBar.add(searchField);
         toolBar.add(search);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        panel.add(toolBar, BorderLayout.PAGE_START);
-        panel.add(scrollPane);
-
-        this.add(panel);
+        JPanel salesOrderPanel = new JPanel();
+        salesOrderPanel.setLayout(new BorderLayout());
+        salesOrderPanel.add(toolBar, BorderLayout.PAGE_START);
+        salesOrderPanel.add(salesOrderScrollPane);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+            salesOrderPanel, productScrollPane);
+        splitPane.setDividerLocation(200);
+        
+        this.add(splitPane);
         this.setVisible(true);
     }
     
@@ -114,7 +153,14 @@ public class SalesOrderTab extends JPanel
     {
         JTable localTable;
 
-        DefaultTableModel model = new DefaultTableModel();
+        DefaultTableModel model = new DefaultTableModel()
+        {
+            @Override
+            public boolean isCellEditable(int row, int column) 
+            {
+               return false;
+            }
+        };
 
         for (Object columnName: columnNames)
             model.addColumn(columnName);
@@ -141,7 +187,7 @@ public class SalesOrderTab extends JPanel
     
     private void showSearchResults(String deliveryStatus)
     {
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        DefaultTableModel model = (DefaultTableModel)salesOrdertable.getModel();
         while (model.getRowCount() > 0)
             model.removeRow(0);
         
@@ -159,9 +205,34 @@ public class SalesOrderTab extends JPanel
         }
     }
     
+    private void updateProductTable(ArrayList<Purchase> purchases)
+    {
+        DefaultTableModel model = (DefaultTableModel)productTable.getModel();
+        while (model.getRowCount() > 0)
+            model.removeRow(0);
+        
+        String type = "";
+        for (int i = 0; i < purchases.size(); i++)
+        {
+            Product product = purchases.get(i).getProduct();
+            if (product instanceof Clothing)
+                type = "clothing";
+            else if (product instanceof Equipment)
+                type = "equipment";
+            else if (product instanceof GunReplica)
+                type = "gun replica";
+            
+            Object[] data = {product.getId(), product.getName(), 
+                product.getPurchasePrice(), product.getSalesPrice(), 
+                product.getRentPrice(), product.getCountryOfOrigin(),
+                product.getMinStock(), type};
+            model.addRow(data);
+        }
+    }
+    
     public void updateTable()
     {
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        DefaultTableModel model = (DefaultTableModel)salesOrdertable.getModel();
         while (model.getRowCount() > 0)
             model.removeRow(0);
         

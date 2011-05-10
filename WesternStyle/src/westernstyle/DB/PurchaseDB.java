@@ -22,6 +22,11 @@ public class PurchaseDB
         return where("");
     }
     
+    public ArrayList<Purchase> getPurchasesBySalesOrderId(int id)
+    {
+        return where("salesOrderId = " + id);
+    }
+    
     public Purchase getPurchase(int id)
     {
         return singleWhere("id = "+id);
