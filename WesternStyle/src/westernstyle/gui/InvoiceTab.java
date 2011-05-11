@@ -16,6 +16,8 @@ import westernstyle.DB.InvoiceDB;
 import westernstyle.DB.SalesOrderDB;
 import westernstyle.core.SalesOrder;
 import westernstyle.DB.GetMax;
+import westernstyle.DB.PurchaseDB;
+import westernstyle.core.Purchase;
 
 public class InvoiceTab extends JPanel
 {
@@ -124,6 +126,8 @@ public class InvoiceTab extends JPanel
         SalesOrderDB salesOrderDB = new SalesOrderDB();
         ArrayList<SalesOrder> salesOrders = salesOrderDB.
                 getSalesOrdersByInvoiceId(id);
+        PurchaseDB purchaseDB = new PurchaseDB();
+        
         if (!salesOrders.isEmpty())
         {
             choice = JOptionPane.showConfirmDialog(
@@ -137,6 +141,11 @@ public class InvoiceTab extends JPanel
             {
                 for (int i = 0; i < salesOrders.size(); i++)
                 {
+                    ArrayList<Purchase> purchases = purchaseDB.
+                        getPurchasesBySalesOrderId(salesOrders.get(i).getId());
+                    for (int j = 0; j < purchases.size(); j++)
+                        purchaseDB.delete(purchases.get(j).getId());
+                    
                     salesOrderDB.delete(salesOrders.get(i).getId());
                 }
                 salesOrderTab.updateTable();

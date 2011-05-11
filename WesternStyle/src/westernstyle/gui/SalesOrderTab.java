@@ -185,9 +185,15 @@ public class SalesOrderTab extends JPanel
                 this,
                 "Are you sure you want to remove sales order?", "Removal",
                 JOptionPane.YES_NO_OPTION);
+        PurchaseDB purchaseDB = new PurchaseDB();
 
         if (choice == 0)
         {
+            ArrayList<Purchase> purchases = purchaseDB.
+                getPurchasesBySalesOrderId(id);
+            for (int i = 0; i < purchases.size(); i++)
+                purchaseDB.delete(purchases.get(i).getId());
+            
             salesOrderDB.delete(id);
             updateTable();
         }

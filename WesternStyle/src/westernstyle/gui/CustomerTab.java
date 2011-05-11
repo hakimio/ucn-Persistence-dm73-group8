@@ -12,6 +12,8 @@ import westernstyle.DB.CustomerDB;
 import westernstyle.DB.SalesOrderDB;
 import westernstyle.core.SalesOrder;
 import westernstyle.DB.GetMax;
+import westernstyle.DB.PurchaseDB;
+import westernstyle.core.Purchase;
 
 public class CustomerTab extends JPanel
 {
@@ -120,6 +122,8 @@ public class CustomerTab extends JPanel
         SalesOrderDB salesOrderDB = new SalesOrderDB();
         ArrayList<SalesOrder> salesOrders = salesOrderDB.
                 getSalesOrdersByCustomerId(id);
+        PurchaseDB purchaseDB = new PurchaseDB();
+        
         int choice;
         String custName = customer.getName();
         if (!salesOrders.isEmpty())
@@ -135,6 +139,11 @@ public class CustomerTab extends JPanel
             {
                 for (int i = 0; i < salesOrders.size(); i++)
                 {
+                    ArrayList<Purchase> purchases = purchaseDB.
+                        getPurchasesBySalesOrderId(salesOrders.get(i).getId());
+                    for (int j = 0; j < purchases.size(); j++)
+                        purchaseDB.delete(purchases.get(j).getId());
+                    
                     salesOrderDB.delete(salesOrders.get(i).getId());
                 }
                 salesOrderTab.updateTable();
