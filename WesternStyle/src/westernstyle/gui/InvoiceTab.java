@@ -107,7 +107,14 @@ public class InvoiceTab extends JPanel
     {
         JTable localTable;
 
-        DefaultTableModel model = new DefaultTableModel();
+        DefaultTableModel model = new DefaultTableModel()
+        {
+            @Override
+            public boolean isCellEditable(int row, int column) 
+            {
+               return false;
+            }
+        };
 
         for (Object columnName: columnNames)
             model.addColumn(columnName);
