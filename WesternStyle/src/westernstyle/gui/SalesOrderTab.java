@@ -45,8 +45,8 @@ public class SalesOrderTab extends JPanel
         salesOrdertable = createTable(salesOrderColumns);
         updateTable();
         
-        String productColumns[] = {"id", "Name", "Purchase Pr", "Sales Pr",
-            "Rent Pr", "Country", "MIN Stock", "Type"};
+        String productColumns[] = {"id", "Name", "Purchase Price", 
+            "Sales Price", "Rent Price", "Country", "MIN Stock", "Type"};
         productTable = createTable(productColumns);
         
         salesOrdertable.getSelectionModel().addListSelectionListener(
@@ -141,8 +141,16 @@ public class SalesOrderTab extends JPanel
         salesOrderPanel.setLayout(new BorderLayout());
         salesOrderPanel.add(toolBar, BorderLayout.PAGE_START);
         salesOrderPanel.add(salesOrderScrollPane);
+        
+        JPanel productPanel = new JPanel();
+        productPanel.setLayout(new BorderLayout());
+        JLabel productsLabel = new JLabel("Associated products", JLabel.CENTER);
+        productsLabel.setPreferredSize(new Dimension(640, 20));
+        productPanel.add(productsLabel, BorderLayout.PAGE_START);
+        productPanel.add(productScrollPane);
+        
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-            salesOrderPanel, productScrollPane);
+            salesOrderPanel, productPanel);
         splitPane.setDividerLocation(200);
         
         this.add(splitPane);
@@ -230,7 +238,7 @@ public class SalesOrderTab extends JPanel
         }
     }
     
-    public void updateTable()
+    public final void updateTable()
     {
         DefaultTableModel model = (DefaultTableModel)salesOrdertable.getModel();
         while (model.getRowCount() > 0)

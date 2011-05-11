@@ -165,7 +165,7 @@ public class CustomerTab extends JPanel
         for (int i = 0; i < custCount; i++)
         {
             Customer customer = customerDB.getCustomersByName(name).get(i);
-            Object[] custData = {i, customer.getId(),
+            Object[] custData = {i+1, customer.getId(),
                 customer.getName(), customer.getAddress(),
                 customer.getOrderZipCode(), customer.getCity(), 
                 customer.getPhoneno()};
